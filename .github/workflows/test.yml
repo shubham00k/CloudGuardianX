@@ -1,0 +1,60 @@
+name: CloudGuardianX CI/CD
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      # Clones your repository into the GitHub Actions runner for testing.
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+      # Installs Python 3.9, matching your project's requirements.
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+      # Installs `boto3`, `slack_sdk`, `flask` from `requirements.txt`.
+
+    - name: Lint with flake8
+      run: |
+        pip install flake8
+        # Stop the build if there are Python syntax errors or undefined names
+        flake8 . --max-line-length=100 --extend-ignore=E203
+      # Checks Python code quality, ensuring no syntax/style issues in `cloudguardianx.py` and `dashboard.py`.
+
+    - name: Run unit tests
+      run: |
+        # Add any unit tests here (e.g., pytest for cloudguardianx.py functions)
+        # For now, we'll simulate a basic test
+        python -c "import cloudguardianx; print('CloudGuardianX imported successfully')"
+      # Placeholder for unit tests—can expand with `pytest` to test `create_aws_snapshot`, `list_aws_snapshots`, etc.
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+      # Prepares Docker for building images in GitHub Actions.
+
+    - name: Build Docker image
+      run: |
+        docker build -t cloudguardianx .
+      # Builds the Docker image from `Dockerfile`.
+
+    - name: Test Docker container
+      run: |
+        docker run -d -p 5000:5000 --name cloudguardianx_test cloudguardianx
+        sleep 5  # Give time for Flask to start
+        curl -s http://localhost:5000 > /dev/null || exit 1
+        docker stop cloudguardianx_test
+        docker rm cloudguardianx_test
+      # Runs the Docker container, checks the dashboard loads via `curl`, then cleans up.

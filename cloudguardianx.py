@@ -1,3 +1,4 @@
+import os
 import boto3
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
@@ -5,15 +6,13 @@ from datetime import datetime
 import argparse
 
 
-# Hardcoded configuration (replace with your actual values)
-AWS_REGION = "us-east-1"
-AWS_ACCESS_KEY_ID = "your-aws-access-key"
-AWS_SECRET_ACCESS_KEY = "your-aws-secret-key"
-AWS_VOLUME_ID = "vol-1234567890abcdef0"  # Your EBS volume ID
-INSTANCE_ID = "i-4567890abcdef123"      # Your EC2 instance ID
-SLACK_TOKEN = "xoxb-your-slack-token"    # Your Slack Bot User OAuth Token
-SLACK_CHANNEL = "#notification-test"     # Your Slack channel
-
+AWS_REGION = os.environ.get('AWS_REGION', 'us-east-1')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', None)
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', None)
+AWS_VOLUME_ID = os.environ.get('AWS_VOLUME_ID', 'vol-1234567890abcdef0')
+INSTANCE_ID = os.environ.get('INSTANCE_ID', 'i-4567890abcdef123')
+SLACK_TOKEN = os.environ.get('SLACK_TOKEN', 'xoxb-placeholder-token')
+SLACK_CHANNEL = os.environ.get('SLACK_CHANNEL', '#notification-test')
 
 # AWS and Slack clients
 aws_ec2 = boto3.client('ec2', region_name=AWS_REGION,

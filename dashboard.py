@@ -1,5 +1,4 @@
 from flask import Flask, render_template
-import boto3
 from cloudguardianx import AWS_REGION, AWS_VOLUME_ID, list_aws_snapshots
 
 app = Flask(__name__, static_folder='static')  # Enable static files

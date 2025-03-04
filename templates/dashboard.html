@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudGuardianX Dashboard</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #87CEEB, #E0F7FA);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            height: 100vh; /* Ensure full viewport height */
+            overflow-y: auto; /* Allow body scroll if needed, but prefer container expansion */
+            position: relative; /* For absolute positioning of clouds */
+        }
+
+        /* Cloud Positioning (Outside Dashboard, Left and Right) */
+        .cloud-wrapper-left, .cloud-wrapper-right {
+            position: absolute;
+            top: 50%; /* Center vertically */
+            transform: translateY(-50%); /* Center vertically */
+            z-index: 1; /* Above background, below dashboard */
+        }
+
+        .cloud-wrapper-left {
+            left: 20px; /* Distance from left edge */
+        }
+
+        .cloud-wrapper-right {
+            right: 20px; /* Distance from right edge */
+        }
+
+        .cloud-happy {
+            display: block; /* Always visible, no sad cloud */
+            max-width: 300px; /* Fit the 300x375px image */
+            width: 100%;
+            height: auto;
+            animation: float 3s ease-in-out infinite; /* Keep float animation */
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Dashboard Container */
+        .container {
+            margin: 20px auto; /* Reduced top/bottom margin for more space */
+            padding: 20px; /* Reduced padding for more space */
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            min-height: 80vh; /* Ensure container takes up most of viewport height */
+            animation: fadeIn 1s ease-in-out;
+            position: relative; /* For z-index layering */
+            z-index: 2; /* Above clouds */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #1E90FF;
+            font-size: 36px;
+            margin-bottom: 20px;
+            animation: bounce 1.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Stats Section */
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0; /* Reduced margin for more space */
+            font-size: 18px;
+            animation: slideIn 1s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .stats div {
+            background: #F0F8FF;
+            padding: 15px; /* Reduced padding for more space */
+            border-radius: 15px;
+            flex: 1;
+            margin: 0 5px; /* Reduced margin for more space */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stats div:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Snapshots List (Expanded, Non-Scrollable) */
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin: 15px 0; /* Reduced margin for more space */
+            animation: slideIn 1s ease-in-out;
+        }
+
+        li {
+            background: #E6F3FF;
+            margin: 5px 0; /* Reduced margin for more space */
+            padding: 12px; /* Reduced padding for more space */
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        li:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #F0F8FF;
+            border-radius: 10px;
+            margin: 15px 0; /* Reduced margin for more space */
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #1E90FF, #00BFFF);
+            border-radius: 10px;
+            width: 0%; /* Start at 0, updated dynamically in JavaScript */
+            animation: progressFill 2s ease-in-out;
+        }
+
+        @keyframes progressFill {
+            from { width: 0; }
+            to { width: 100%; } /* Use static value for animation, JavaScript sets final width */
+        }
+
+        /* Media Queries */
+        @media (max-width: 600px) {
+            .stats { flex-direction: column; }
+            .stats div { margin: 5px 0; }
+            h1 { font-size: 28px; }
+            .container { min-height: 70vh; } /* Adjust for smaller screens */
+            .cloud-wrapper-left, .cloud-wrapper-right { display: none; } /* Hide clouds on small screens */
+        }
+    </style>
+</head>
+<body>
+    <div class="cloud-wrapper-left">
+        <img class="cloud-happy" src="{{ url_for('static', filename='happy_cloud.jpeg') }}" alt="Happy Cloud" style="display: block; max-width: 300px; width: 100%; height: auto;" />
+    </div>
+    <div class="cloud-wrapper-right">
+        <img class="cloud-happy" src="{{ url_for('static', filename='happy_cloud.jpeg') }}" alt="Happy Cloud" style="display: block; max-width: 300px; width: 100%; height: auto;" />
+    </div>
+    <div class="container">
+        <h1>CloudGuardianX Dashboard</h1>
+        <div class="stats">
+            <div>Total Snapshots: {{ snapshots|length }}</div>
+            <div>Total Size: {{ total_size }} GB</div>
+            <div>Est. Cost: ${{ "%.2f"|format(cost) }}</div>
+        </div>
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+        <h2>Snapshots</h2>
+        <ul>
+            {% for snap in snapshots %}
+                <li>{{ snap['SnapshotId'] }} - {{ snap['StartTime'] }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+        // Pass snapshots length and total size as JavaScript variables from Flask
+        const snapshotCount = {{ snapshots|length }};
+        const totalSize = {{ total_size }};
+
+        // Update progress bar dynamically (no cloud toggle needed since both are happy clouds)
+        document.addEventListener('DOMContentLoaded', () => {
+            const progress = document.querySelector('.progress');
+            progress.style.width = Math.min((totalSize / 1000) * 100, 100) + '%'; // Cap at 100% for 1000GB
+        });
+    </script>
+</body>
+</html>

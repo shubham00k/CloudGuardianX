@@ -1,10 +1,9 @@
-import os
+import os 
 import boto3
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from datetime import datetime
 import argparse
-
 
 AWS_REGION = os.environ.get('AWS_REGION', 'us-east-1')
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', None)
@@ -13,7 +12,7 @@ AWS_VOLUME_ID = os.environ.get('AWS_VOLUME_ID', 'vol-1234567890abcdef0')
 INSTANCE_ID = os.environ.get('INSTANCE_ID', 'i-4567890abcdef123')
 SLACK_TOKEN = os.environ.get('SLACK_TOKEN', 'xoxb-placeholder-token')
 SLACK_CHANNEL = os.environ.get('SLACK_CHANNEL', '#notification-test')
-
+# ... rest of the code (same as before)
 # AWS and Slack clients
 aws_ec2 = boto3.client('ec2', region_name=AWS_REGION,
                       aws_access_key_id=AWS_ACCESS_KEY_ID,

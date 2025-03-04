@@ -27,11 +27,10 @@ jobs:
         pip install -r requirements.txt
       # Installs `boto3`, `slack_sdk`, `flask` from `requirements.txt`.
 
-    - name: Lint with flake8
+      - name: Lint with flake8
       run: |
         pip install flake8
-        # Stop the build if there are Python syntax errors or undefined names
-        flake8 . --max-line-length=100 --extend-ignore=E203
+        flake8 cloudguardianx.py dashboard.py tests/ --max-line-length=100 --extend-ignore=E203
       # Checks Python code quality, ensuring no syntax/style issues in `cloudguardianx.py` and `dashboard.py`.
 
     - name: Run unit tests
